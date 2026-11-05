@@ -762,6 +762,10 @@ function handleOrientation(event){
         -heading
     );
     const arrow =
-            document.getElementById(".current-arrow");
-    if(arrow){arrow.style.transform=`rotate(${heading}deg)`;}
+            document.getElementById("current-arrow");
+    if(
+            arrow
+    ){
+            arrow.style.transform=`rotate(${heading}deg)`;
+    }
 }
