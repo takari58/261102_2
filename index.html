@@ -2,115 +2,54 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>しばコレマップ</title>
-    <!-- Leaflet -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>しばコレ マップ</title>
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- 地図回転 -->
-    <script src="https://raruto.github.io/leaflet-rotate/dist/leaflet-rotate.js"></script>
-    <!-- CSS -->
+    <script src="https://raruto.github.io/leaflet-rotate/dist/leaflet-rotate-src.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+<header>
+    <h1>新発田観光マップ</h1>
+</header>
 
-    <header>
-        <h1>新発田観光マップ</h1>
-    </header>
+<div id="categories">
+    <button class="category-btn active" data-category="all">すべて</button>
+    <button class="category-btn" data-category="観光">🏯 観光</button>
+    <button class="category-btn" data-category="グルメ">🍴 グルメ</button>
+    <button class="category-btn" data-category="交通">🚉 交通</button>
+    <button class="category-btn" data-category="公共施設">🏛 公共施設</button>
+</div>
 
-    <div id="categories">
-        <button class="category-btn active" data-category="all">
-            すべて
-        </button>
-        <button class="category-btn" data-category="観光">
-            🏯 観光
-        </button>
-        <button class="category-btn"data-category="グルメ">
-            🍴 グルメ
-        </button>
-        <button class="category-btn"data-category="交通" >
-            🚉 交通
-        </button>
-        <button class="category-btn"data-category="公共施設">
-            🏛 公共施設
-        </button>
-    </div>
+<div id="info">
+    地図上のピンをタップしてください。
+</div>
 
-    <div id="info">
-        地図上のピンをタップしてください。
-    </div>
+<div id="map"></div>
 
-    <div id="map"></div>
+<button id="locationButton">
+    ◎
+</button>
+<button id ="compassButton">
+     🧭
+</button>
 
-    <button id="locationButton">
-        ◎
-    </button>
-    <button id="compassButton">
-        🧭
-    </button>
-<!--開発用-->
-    <div id="sensorPanel">
-        <div>
-            heading :
-            <span id="val-heading">
-                0
-            </span>
-        </div>
-        <div>
-            α :
-            <span id="val-alpha">
-                0
-            </span>
-        </div>
-        <div>
-            β :
-            <span id="val-beta">
-                0
-            </span>
-        </div>
-        <div>
-            γ :
-            <span id="val-gamma">
-                0
-            </span>
-        </div>
-    </div>
+<!-- 凡例 今は非表示 いらない気がする
+<div id="legend">
+    <div class="legend-title"> ジャンル</div>
+    <div class="legend-item">
+        <span class="legend-icon tourist">🏯</span>観光</div>
+    <div class="legend-item">
+        <span class="legend-icon food">🍴</span>グルメ</div>
+    <div class="legend-item">
+        <span class="legend-icon transport">🚉</span>交通</div>
+    <div class="legend-item">
+        <span class="legend-icon public">🏛</span>公共施設</div>
+</div>-->
 
-    <div id="arrowMarker">
-        ⬆️
-    </div>
-
-    <!-- 凡例 
-    <div id="legend">
-        <div class="legend-title">
-            カテゴリー
-        </div>
-        <div class="legend-item">
-            <div class="legend-icon tourist">
-                🏯
-            </div>
-            観光
-        </div>
-        <div class="legend-item">
-            <div class="legend-icon food">
-                🍴
-            </div>
-            グルメ
-        </div>
-        <div class="legend-item">
-            <div class="legend-icon transport">
-                🚉
-            </div>
-            交通
-        </div>
-        <div class="legend-item">
-            <div class="legend-icon public">
-                🏛
-            </div>
-            公共施設
-        </div>
-    </div>-->
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
