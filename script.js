@@ -416,7 +416,7 @@ function updateCurrentMarker(lat,lng,accuracy) {
         html: `
             <div id="arrow"
                     class="current-arrow">
-                ⬆️
+                ▲
             </div>
         `,
         iconSize: [30,30],
