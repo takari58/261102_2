@@ -415,6 +415,8 @@ function startNavigation(goal) {
     );
 }
 
+//マーカー反映確認
+console.log("ARROW TEST");
 // 現在地マーカー
 function updateCurrentMarker(lat,lng,accuracy) {
     const currentIcon = L.divIcon({
