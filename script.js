@@ -12,7 +12,12 @@ const map = L.map("map",{
 console.log(map);
 map.touchRotate.enable();
 map.on("zoomend rotate",() => {
-        map.invalidateSize();
+        map.invalidateSize();html: `
+    <div id="arrow"
+         class="current-arrow">
+        ▲
+    </div>
+`
 });
 
 console.log("touchRotate =",map.touchRotate);
@@ -749,7 +754,7 @@ function handleOrientation(event){
         event.alpha !== null
     ){
         heading =
-            360 - event.alpha;
+            event.alpha;
     }
     if(heading === null){
         return;
