@@ -807,6 +807,8 @@ function handleOrientation(event){
     γ : ${event.gamma?.toFixed(1)}
     <br>
     absolute : ${event.absolute}
+    <br>
+    webkit : ${enent.wevkitCompassHeading}
     `;
     // 地図回転（今はコメントアウト）
     /*
