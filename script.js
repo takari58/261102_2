@@ -1,7 +1,22 @@
+console.log("leaflet=",L);
+console.log("Bearing =",L.Map.prototype.setBearing);
+
 const map = L.map("map",{
-    maxZoom:19,
-    minZoom:13
-})
+        maxZoom:19,
+        minZoom:5,
+        rotate:true,
+        touchRotate:true,
+        bearing:0
+});
+console.log(map);
+map.touchRotate.enable();
+map.on("zoomend rotate",() => {
+        map.invalidateSize();
+});
+
+console.log("touchRotate =",map.touchRotate);
+
+//初期位置を現在地に
 navigator.geolocation.getCurrentPosition(
     function(position) {
         const lat = position.coords.latitude;
@@ -208,15 +223,11 @@ const goals = [
         icon: "🍴"
     }
 ];
-
 const categoryColors = {
     "観光": "#f39c12",
-    //"神社・寺": "#8e44ad",
     "グルメ": "#e74c3c",
     "交通": "#3498db",
     "公共施設": "#27ae60",
-    //"温泉": "#00a8cc"
-
 };
 
 let currentMarker = null;
@@ -224,6 +235,8 @@ let routeLine = null;
 let watchId = null;
 let selectedGoal = null;
 let currentPosition = null;
+
+let inCompassMode = false;
 
 const markers = [];
 
@@ -353,6 +366,9 @@ function startNavigation(goal) {
                 myLng,
                 accuracy
             );
+            if(inCompassMode){
+                    map.panTo([myLat,myLng],{animate:false});
+            }
             if (selectedGoal) {
                 showRoute(
                     myLat,
@@ -398,11 +414,13 @@ function updateCurrentMarker(lat,lng,accuracy) {
     const currentIcon = L.divIcon({
         className: "current-marker",
         html: `
-            <div class="current-location">
+            <div id="arrow"
+                    class="current-arrow">
+                ⬆️
             </div>
         `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
+        iconSize: [30,30],
+        iconAnchor: [16,16]
     });
 
     // 初回
@@ -438,7 +456,6 @@ async function showRoute(
     try {
         const response =
             await fetch(url);
-
         const data =
             await response.json();
 
@@ -501,7 +518,7 @@ async function showRoute(
         const distanceMeter =
             route.distance;
 
-        // 徒歩時間
+        // 徒歩時間 4km/h
         const walkMinutes =
             Math.max(
                 1,
@@ -509,13 +526,13 @@ async function showRoute(
                     distanceMeter / 66.67
                 )
             );
-        //自転車
+        //自転車 15km/h
         const bicycleMinutes = 
             Math.max(
                 1,
                 Math.round(distanceMeter/250)
             );
-        //車
+        //車 30km/h
         const carMinutes = 
             Math.max(
                 1,
@@ -534,34 +551,12 @@ async function showRoute(
                     ${goal.category}
                 </div>
                 <div class="route-information">
-                    <div>
-                        🚶
-                        <strong>
-                            約 ${walkMinutes} 分
-                        </strong>
-                    </div>
-                    <div>
-                        🚴
-                        <strong>
-                            約 ${bicycleMinutes} 分
-                        </strong>
-                    </div>
-                    <div>
-                        🚙
-                        <strong>
-                            約 ${carMinutes} 分
-                        </strong>
-                    </div>
-                    <div>
-                        📏
-                        <strong>
-                            ${distanceKm} km
-                        </strong>
-                    </div>
+                    <div>🚶<strong> 約 ${walkMinutes} 分</strong></div>
+                    <div>🚴<strong> 約 ${bicycleMinutes} 分</strong></div>
+                    <div>🚙<strong>約 ${carMinutes} 分</strong></div>
+                    <div>📏<strong>${distanceKm} km</strong></div>
                 </div>
-                <div class="route-message">
-                    🧭 青い線に沿って進んでください
-                </div>
+                <div class="route-message">🧭 青い線に沿って進んでください</div>
             `;
     }
 
@@ -636,7 +631,6 @@ document
     .addEventListener(
         "click",
         function() {
-
             // 現在地がすでに取得できている
             if (currentPosition) {
                 map.setView(
@@ -648,7 +642,6 @@ document
                 );
                 return;
             }
-
             // GPSが使えない
             if (!navigator.geolocation) {
                 alert(
@@ -656,7 +649,6 @@ document
                 );
                 return;
             }
-
             // 現在地取得
             navigator.geolocation.getCurrentPosition(
                 function(position) {
@@ -692,3 +684,79 @@ document
             );
         }
     );
+
+//コンパス開始処理
+document
+.getElementById("compassButton")
+.addEventListener(
+    "click",
+    toggleCompass
+);
+function toggleCompass(){
+    inCompassMode =
+        !inCompassMode;
+    if(!inCompassMode){
+        map.setBearing(0);
+        window.removeEventListener(
+            "deviceorientation",
+            handleOrientation,
+            true
+        );
+        return;
+    }
+    if(
+        typeof DeviceOrientationEvent
+        !== "undefined"
+        &&
+        typeof DeviceOrientationEvent
+        .requestPermission
+        === "function"
+    ){
+        DeviceOrientationEvent
+        .requestPermission()
+        .then(result=>{
+            if(result==="granted"){
+                startCompass();
+            }
+        });
+    }else{
+        startCompass();
+    }
+}
+
+//コンパス処理
+function startCompass(){
+    window.addEventListener(
+        "deviceorientation",
+        handleOrientation,
+        true
+    );
+
+}
+
+//地図回転
+function handleOrientation(event){
+    let heading = null;
+    if(
+        event.webkitCompassHeading
+        !== undefined
+    ){
+        heading =
+            event.webkitCompassHeading;
+    }
+    else if(
+        event.alpha !== null
+    ){
+        heading =
+            360 - event.alpha;
+    }
+    if(heading === null){
+        return;
+    }
+    map.setBearing(
+        -heading
+    );
+    const arrow =
+            document.getElementById("arrow");
+    if(arrow){arrow.style.transform="rotate(0deg)";}
+}
