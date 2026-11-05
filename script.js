@@ -762,7 +762,7 @@ function handleOrientation(event){
         -heading
     );
     const arrow =
-            document.querySelector(".current-arrow");
+            document.getElementById("arrow");
     if(
             arrow
     ){
