@@ -744,8 +744,7 @@ function startCompass(){
 function handleOrientation(event){
     let heading = null;
     if(
-        event.webkitCompassHeading
-        !== undefined
+        event.webkitCompassHeading !== undefined
     ){
         heading =
             event.webkitCompassHeading;
@@ -754,7 +753,7 @@ function handleOrientation(event){
         event.alpha !== null
     ){
         heading =
-            event.alpha;
+            (360 - event.alpha) % 360;
     }
     if(heading === null){
         return;
