@@ -735,7 +735,7 @@ function toggleCompass(){
 //コンパス処理
 function startCompass(){
     window.addEventListener(
-        "deviceorientationabsolute",
+        "deviceorientation",
         handleOrientation,
         true
     );
