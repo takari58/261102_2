@@ -755,8 +755,14 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
-        console.log(event);
-        console.log("absolute =",event.absolute, 
+        if(!event){
+                cnosole.log("eventなし");
+                return;
+        }
+        
+        console.log(
+                "type =",event.type,
+                "absolute =",event.absolute, 
                 "alpha =",event.aipha,
                 "webkitCompassHeading =",event.webkitCompassHeading);
         let heading = null;
