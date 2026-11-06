@@ -817,7 +817,7 @@ function handleOrientation(event){
         <br>
         gamma:${event.gamma?.toFixed(1)}
         <br>
-        absolute:${event.absolute?.toFixed(1)}
+        absolute:${event.absolute}
         `;
         
         // 地図回転（今はコメントアウト）
