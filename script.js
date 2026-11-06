@@ -14,7 +14,7 @@ map.touchRotate.enable();
 map.on("zoomend rotate",() => {
         map.invalidateSize();
 });
-    <div id="arrow"
+    <div id="arrow",
          class="current-arrow">
         ⬆️
     </div>
