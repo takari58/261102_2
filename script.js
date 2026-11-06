@@ -693,7 +693,7 @@ document
 .getElementById("compassButton")
 .addEventListener(
     "click",
-    toggleCompasss
+    toggleCompass
 );
         console.log(document.getElemenById("compassButton"));
 function toggleCompass(){
