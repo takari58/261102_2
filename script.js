@@ -14,12 +14,6 @@ map.touchRotate.enable();
 map.on("zoomend rotate",() => {
         map.invalidateSize();
 });
-    <div id="arrow",
-         class="current-arrow">
-        ⬆️
-    </div>
-`
-});
 
 console.log("touchRotate =",map.touchRotate);
 
@@ -425,7 +419,7 @@ function updateCurrentMarker(lat,lng,accuracy) {
         html: `
             <div id="arrow"
                     class="current-arrow">
-                ▲
+                ⬆️
             </div>
         `,
         iconSize: [30,30],
