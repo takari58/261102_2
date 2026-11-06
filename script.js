@@ -747,7 +747,13 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
-        console.log("イベント受信");
+        console.log(
+                "type =",event.type,
+                "alpha =",event.alpha,
+                "beta =",event.beta,
+                "gamma =",event.gumma,
+                "absolute =",event.absolute
+        );
         /*
         console.log("alpha =",event.alpha);
         if(!event){
