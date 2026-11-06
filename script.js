@@ -807,13 +807,11 @@ function handleOrientation(event){
                 normalizeAngle(
                     smoothHeading
                 );
-        }
+        }*/
         // デバッグ表示
         document.getElementById("info").innerHTML =
         `
         heading : ${heading.toFixed(1)}
-        <br>
-        smooth : ${smoothHeading.toFixed(1)}
         <br>
         α : ${event.alpha?.toFixed(1)}
         <br>
@@ -823,9 +821,8 @@ function handleOrientation(event){
         <br>
         absolute : ${event.absolute}
         <br>
-        webkit : ${event.webkitCompassHeading}
         `;
-        */
+        
         // 地図回転（今はコメントアウト）
         /*
         map.setBearing(
