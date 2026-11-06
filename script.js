@@ -780,7 +780,7 @@ function handleOrientation(event){
             typeof event.alpha === "number"
         ){
             heading =
-                event.alpha;
+                (360 - event.alpha) % 360;
         }
         /*
         if(heading === null){
