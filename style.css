@@ -265,10 +265,24 @@ header h1 {
     transition:
         all 0.2s ease;
 }
+#calibrateButton{
+    position:fixed;
+    right:20px;
+    button:140px;
+    width:120px;
+    height:50px;
+    z-index:1000;
+}
 #locationButton:hover {
     transform: scale(1.05);
 }
 #locationButton:active {
+    transform: scale(0.92);
+}
+#compassButton:hover {
+    transform: scale(1.05);
+}
+#compassButton:active {
     transform: scale(0.92);
 }
 #legend {
