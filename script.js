@@ -746,6 +746,8 @@ function normalizeAngle(angle){
     ) % 360;
 }
 
+let headingOffset = 0;
+
 function handleOrientation(event){
         console.log(
                 "type =",event.type,
@@ -781,6 +783,8 @@ function handleOrientation(event){
         ){
             heading =
                 (360 - event.alpha) % 360;
+            heading =
+                (heading + headingOffset) % 360;
         }
         /*
         if(heading === null){
