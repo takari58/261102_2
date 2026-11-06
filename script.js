@@ -734,28 +734,16 @@ function toggleCompass(){
 
 //コンパス処理
 function startCompass(){
-    if(
-        "ondeviceorientationabsolute"
-        in window
-    ){
         window.addEventListener(
-            "deviceorientationabsolute",
-            handleOrientation,
-            true
+                "deviceorientationabsolute",
+                handleOrientation,
+                true
         );
-        console.log(
-            "absolute mode"
-        );
-    }else{
         window.addEventListener(
-            "deviceorientation",
-            handleOrientation,
-            true
+                "deviceorientation",
+                handleOrientation,
+                true
         );
-        console.log(
-            "normal mode"
-        );
-    }
 }
 
 let smoothHeading = 0;
@@ -767,18 +755,20 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
-    console.log("absolute =",event.absolute, "alpha =",event.aipha);
+    console.log("absolute =",event.absolute, 
+                "alpha =",event.aipha,
+                "webkitCompassHeading =",event.webkitCompassHeading);
     let heading = null;
     // iPhone
     if(
-        event.webkitCompassHeading !== undefined
+        typeof event.webkitCompassHeading === "number"
     ){
         heading =
             event.webkitCompassHeading;
     }
     // Android
     else if(
-        event.alpha !== null
+        typeof event.alpha === "number"
     ){
         heading =
             event.alpha;
