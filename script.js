@@ -811,11 +811,11 @@ function handleOrientation(event){
         // デバッグ表示
         document.getElementById("info").innerHTML =
         `
-        alpha:${event.alpha?.toFixed(1)}
+        alpha:${event.alpha !== null ? event.alpha.toFixed(1) : "null"}
         <br>
-        beta:${event.beta?.toFixed(1)}
+        beta:${event.beta !== null ? event.beta.toFixed(1) : "null"}
         <br>
-        gamma:${event.gamma?.toFixed(1)}
+        gamma:${event.gamma !== null ? event.gamma.toFixed(1) : "null"}
         <br>
         absolute:${event.absolute}
         `;
