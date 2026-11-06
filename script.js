@@ -695,7 +695,7 @@ document
     "click",
     toggleCompass
 );
-        console.log(document.getElemenById("compassButton"));
+        console.log(document.getElementById("compassButton"));
 function toggleCompass(){
         console.log("toggleCompass");
         inCompassMode =
