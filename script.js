@@ -729,6 +729,23 @@ function toggleCompass(){
         }
 }
 
+document
+.getElementById("calibrateButton")
+.addEventListener(
+        "click",
+        function(){
+                headingOffset = 
+                        (360 - smoothHeading) % 360;
+                console.log(
+                        "headingOffset =",
+                        headingOffset
+                );
+                alert(
+                        "北合わせ完了"
+                );
+        }
+);
+
 //コンパス処理
 function startCompass(){
         window.addEventListener(
