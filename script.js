@@ -763,7 +763,7 @@ function handleOrientation(event){
         console.log(
                 "type =",event.type,
                 "absolute =",event.absolute, 
-                "alpha =",event.aipha,
+                "alpha =",event.alpha,
                 "webkitCompassHeading =",event.webkitCompassHeading);
         let heading = null;
         // iPhone
@@ -822,7 +822,7 @@ function handleOrientation(event){
         <br>
         absolute : ${event.absolute}
         <br>
-        webkit : ${enent.webkitCompassHeading}
+        webkit : ${event.webkitCompassHeading}
         `;
         // 地図回転（今はコメントアウト）
         /*
