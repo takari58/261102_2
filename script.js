@@ -811,13 +811,13 @@ function handleOrientation(event){
         // デバッグ表示
         document.getElementById("info").innerHTML =
         `
-        alpha:${event.alpha}
+        alpha:${event.alpha?.toFixed(1)}
         <br>
-        beta:${event.beta}
+        beta:${event.beta?.toFixed(1)}
         <br>
-        gamma:${event.gamma}
+        gamma:${event.gamma?.toFixed(1)}
         <br>
-        absolute:${event.absolute}
+        absolute:${event.absolute?.toFixed(1)}
         `;
         
         // 地図回転（今はコメントアウト）
