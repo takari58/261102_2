@@ -12,7 +12,8 @@ const map = L.map("map",{
 console.log(map);
 map.touchRotate.enable();
 map.on("zoomend rotate",() => {
-        map.invalidateSize();html: `
+        map.invalidateSize();
+});
     <div id="arrow"
          class="current-arrow">
         ⬆️
@@ -750,9 +751,11 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
+        console.log("イベント受信");
+        /*
         console.log("alpha =",event.alpha);
         if(!event){
-                cnosole.log("eventなし");
+                console.log("eventなし");
                 return;
         }
         
@@ -820,12 +823,14 @@ function handleOrientation(event){
         <br>
         webkit : ${event.webkitCompassHeading}
         `;
+        */
         // 地図回転（今はコメントアウト）
         /*
         map.setBearing(
             -smoothHeading
         );
         */
+        /*
         // 矢印取得
         const arrow =
             document.getElementById(
@@ -835,5 +840,5 @@ function handleOrientation(event){
             // テスト用
             arrow.style.transform =
                 `rotate(${-heading}deg)`;
-        }
+        }*/
 }
