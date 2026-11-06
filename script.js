@@ -755,82 +755,83 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
-    console.log("absolute =",event.absolute, 
+        console.log(event);
+        console.log("absolute =",event.absolute, 
                 "alpha =",event.aipha,
                 "webkitCompassHeading =",event.webkitCompassHeading);
-    let heading = null;
-    // iPhone
-    if(
-        typeof event.webkitCompassHeading === "number"
-    ){
-        heading =
-            event.webkitCompassHeading;
-    }
-    // Android
-    else if(
-        typeof event.alpha === "number"
-    ){
-        heading =
-            event.alpha;
-    }
-    if(heading === null){
-        return;
-    }
-    // 初回
-    if(firstHeading){
-        smoothHeading =
-            heading;
-        firstHeading =
-            false;
-    }
-    else{
-        let delta =
-            heading -
-            smoothHeading;
-        if(delta > 180){
-            delta -= 360;
+        let heading = null;
+        // iPhone
+        if(
+            typeof event.webkitCompassHeading === "number"
+        ){
+            heading =
+                event.webkitCompassHeading;
         }
-        if(delta < -180){
-            delta += 360;
+        // Android
+        else if(
+            typeof event.alpha === "number"
+        ){
+            heading =
+                event.alpha;
         }
-        smoothHeading +=
-            delta * 0.15;
-        smoothHeading =
-            normalizeAngle(
-                smoothHeading
-            );
-    }
-    // デバッグ表示
-    document.getElementById("info").innerHTML =
-    `
-    heading : ${heading.toFixed(1)}
-    <br>
-    smooth : ${smoothHeading.toFixed(1)}
-    <br>
-    α : ${event.alpha?.toFixed(1)}
-    <br>
-    β : ${event.beta?.toFixed(1)}
-    <br>
-    γ : ${event.gamma?.toFixed(1)}
-    <br>
-    absolute : ${event.absolute}
-    <br>
-    webkit : ${enent.webkitCompassHeading}
-    `;
-    // 地図回転（今はコメントアウト）
-    /*
-    map.setBearing(
-        -smoothHeading
-    );
-    */
-    // 矢印取得
-    const arrow =
-        document.getElementById(
-            "arrow"
+        if(heading === null){
+            return;
+        }
+        // 初回
+        if(firstHeading){
+            smoothHeading =
+                heading;
+            firstHeading =
+                false;
+        }
+        else{
+            let delta =
+                heading -
+                smoothHeading;
+            if(delta > 180){
+                delta -= 360;
+            }
+            if(delta < -180){
+                delta += 360;
+            }
+            smoothHeading +=
+                delta * 0.15;
+            smoothHeading =
+                normalizeAngle(
+                    smoothHeading
+                );
+        }
+        // デバッグ表示
+        document.getElementById("info").innerHTML =
+        `
+        heading : ${heading.toFixed(1)}
+        <br>
+        smooth : ${smoothHeading.toFixed(1)}
+        <br>
+        α : ${event.alpha?.toFixed(1)}
+        <br>
+        β : ${event.beta?.toFixed(1)}
+        <br>
+        γ : ${event.gamma?.toFixed(1)}
+        <br>
+        absolute : ${event.absolute}
+        <br>
+        webkit : ${enent.webkitCompassHeading}
+        `;
+        // 地図回転（今はコメントアウト）
+        /*
+        map.setBearing(
+            -smoothHeading
         );
-    if(arrow){
-        // テスト用
-        arrow.style.transform =
-            `rotate(${-heading}deg)`;
-    }
+        */
+        // 矢印取得
+        const arrow =
+            document.getElementById(
+                "arrow"
+            );
+        if(arrow){
+            // テスト用
+            arrow.style.transform =
+                `rotate(${-heading}deg)`;
+        }
 }
