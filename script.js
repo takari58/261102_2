@@ -699,38 +699,40 @@ document
 .getElementById("compassButton")
 .addEventListener(
     "click",
-    toggleCompass
+    toggleCompasss
 );
+        console.log(document.getElemenById("compassButton"));
 function toggleCompass(){
-    inCompassMode =
-        !inCompassMode;
-    if(!inCompassMode){
-        map.setBearing(0);
-        window.removeEventListener(
-            "deviceorientation",
-            handleOrientation,
-            true
-        );
-        return;
-    }
-    if(
-        typeof DeviceOrientationEvent
-        !== "undefined"
-        &&
-        typeof DeviceOrientationEvent
-        .requestPermission
-        === "function"
-    ){
-        DeviceOrientationEvent
-        .requestPermission()
-        .then(result=>{
-            if(result==="granted"){
-                startCompass();
-            }
-        });
-    }else{
-        startCompass();
-    }
+        console.log("toggleCompass");
+        inCompassMode =
+            !inCompassMode;
+        if(!inCompassMode){
+            map.setBearing(0);
+            window.removeEventListener(
+                "deviceorientation",
+                handleOrientation,
+                true
+            );
+            return;
+        }
+        if(
+            typeof DeviceOrientationEvent
+            !== "undefined"
+            &&
+            typeof DeviceOrientationEvent
+            .requestPermission
+            === "function"
+        ){
+            DeviceOrientationEvent
+            .requestPermission()
+            .then(result=>{
+                if(result==="granted"){
+                    startCompass();
+                }
+            });
+        }else{
+            startCompass();
+        }
 }
 
 //コンパス処理
