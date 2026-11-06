@@ -766,6 +766,7 @@ function handleOrientation(event){
                 "absolute =",event.absolute, 
                 "alpha =",event.alpha,
                 "webkitCompassHeading =",event.webkitCompassHeading);
+        */
         let heading = null;
         // iPhone
         if(
@@ -781,6 +782,7 @@ function handleOrientation(event){
             heading =
                 event.alpha;
         }
+        /*
         if(heading === null){
             return;
         }
@@ -811,6 +813,8 @@ function handleOrientation(event){
         // デバッグ表示
         document.getElementById("info").innerHTML =
         `
+        heading:${Math.round(heading)}
+        <br>
         alpha:${event.alpha !== null ? event.alpha.toFixed(1) : "null"}
         <br>
         beta:${event.beta !== null ? event.beta.toFixed(1) : "null"}
