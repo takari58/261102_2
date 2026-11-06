@@ -767,8 +767,7 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
-    console.log("absolute =" event.absolute,
-                "alpha ="event.aipha);
+    console.log("absolute =",event.absolute, "alpha =",event.aipha);
     let heading = null;
     // iPhone
     if(
