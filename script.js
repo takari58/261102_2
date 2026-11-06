@@ -734,12 +734,28 @@ function toggleCompass(){
 
 //コンパス処理
 function startCompass(){
-    window.addEventListener(
-        "deviceorientation",
-        handleOrientation,
-        true
-    );
-
+    if(
+        "ondeviceorientationabsolute"
+        in window
+    ){
+        window.addEventListener(
+            "deviceorientationabsolute",
+            handleOrientation,
+            true
+        );
+        console.log(
+            "absolute mode"
+        );
+    }else{
+        window.addEventListener(
+            "deviceorientation",
+            handleOrientation,
+            true
+        );
+        console.log(
+            "normal mode"
+        );
+    }
 }
 
 let smoothHeading = 0;
@@ -751,6 +767,8 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
+    console.log("absolute =" event.absolute,
+                "alpha ="event.aipha);
     let heading = null;
     // iPhone
     if(
