@@ -735,11 +735,6 @@ function toggleCompass(){
 //コンパス処理
 function startCompass(){
         window.addEventListener(
-                "deviceorientationabsolute",
-                handleOrientation,
-                true
-        );
-        window.addEventListener(
                 "deviceorientation",
                 handleOrientation,
                 true
@@ -755,6 +750,7 @@ function normalizeAngle(angle){
 }
 
 function handleOrientation(event){
+        console.log("alpha =",event.alpha);
         if(!event){
                 cnosole.log("eventなし");
                 return;
