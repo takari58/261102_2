@@ -1,18 +1,17 @@
 console.log("leaflet=",L);
 console.log("Bearing =",L.Map.prototype.setBearing);
-console.log(document.querySelectorAll("arrow").length);
 
 const map = L.map("map",{
-        maxZoom:19,
-        minZoom:5,
-        rotate:true,
-        touchRotate:true,
-        bearing:0
+    maxZoom:18,
+    minZoom:5,
+    rotate:true,
+    touchRotate:true,
+    bearing:0
 });
 console.log(map);
 map.touchRotate.enable();
 map.on("zoomend rotate",() => {
-        map.invalidateSize();
+    map.invalidateSize();
 });
 
 console.log("touchRotate =",map.touchRotate);
@@ -23,21 +22,70 @@ navigator.geolocation.getCurrentPosition(
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         map.setView([lat, lng], 18);
-        updateCurrentMarker(
-            lat,
-            lng,
-            position.coords.accuracy
-        );
+        updateCurrentMarker(lat,lng,position.coords.accuracy);
     }
 );
 
-L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-        attribution: "© OpenStreetMap contributors",
-        maxZoom:19
+//openstreetmap
+const osmLayer =
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution:
+            "© OpenStreetMap contributors",
+            maxZoom:19
+        }
+    );
+//航空写真
+const photoLayer =
+    L.tileLayer(
+        "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg",
+        {
+            attribution:"国土地理院",
+            maxZoom:18
+        }
+    );
+
+photoLayer.addTo(map);
+
+let isPhotoMode = true;
+document
+.getElementById("layerButton")
+.addEventListener(
+    "click",
+    function(){
+
+        if(isPhotoMode){
+
+            map.removeLayer(photoLayer);
+            osmLayer.addTo(map);
+
+            this.textContent = "🛰️";
+
+        }else{
+
+            map.removeLayer(osmLayer);
+            photoLayer.addTo(map);
+
+            this.textContent = "🗺️";
+
+        }
+
+        isPhotoMode = !isPhotoMode;
+
+        // ルート再描画
+        if(
+            selectedGoal &&
+            currentPosition
+        ){
+            showRoute(
+                currentPosition.lat,
+                currentPosition.lng,
+                selectedGoal
+            );
+        }
     }
-).addTo(map);
+);
 
 const goals = [
     //カテゴリー：観光、グルメ、交通、公共施設
@@ -368,7 +416,31 @@ function startNavigation(goal) {
                 accuracy
             );
             if(inCompassMode){
-                    map.panTo([myLat,myLng],{animate:false});
+                    map.setView(
+                            [myLat,myLng],
+                            map.getZoom(),
+                            {
+                                animate:false
+                            }
+                    );
+                    /*
+                    const point =
+                            map.project(
+                                    [myLat,myLng]
+                            );
+                    //現在地アイコンのy軸上の位置
+                    point.y += 
+                            window.innerHeight*0.4;
+                    const offsetLatLng =
+                            map.unproject(point);
+                    //アニメーションなしに現在地アイコンを中心に表示させる
+                    map.panTo(
+                            offsetLatLng,
+                            {
+                                    animate:false
+                            }
+                    );
+                    */
             }
             if (selectedGoal) {
                 showRoute(
@@ -410,8 +482,6 @@ function startNavigation(goal) {
     );
 }
 
-//マーカー反映確認
-console.log("ARROW TEST");
 // 現在地マーカー
 function updateCurrentMarker(lat,lng,accuracy) {
     const currentIcon = L.divIcon({
@@ -461,13 +531,11 @@ async function showRoute(
             await fetch(url);
         const data =
             await response.json();
-
         // ルートが存在しない
         if (
             !data.routes ||
             data.routes.length === 0
         ) {
-
             document
                 .getElementById("info")
                 .innerHTML = `
@@ -481,15 +549,12 @@ async function showRoute(
                 `;
             return;
         }
-
         const route =
             data.routes[0];
-
         // 古いルートを削除
         if (routeLine) {
             map.removeLayer(routeLine);
         }
-
         // GeoJSON → Leaflet形式
         const latlngs =
             route.geometry.coordinates.map(
@@ -498,29 +563,30 @@ async function showRoute(
                     point[0]
                 ]
             );
-
         // 新しいルート
-        routeLine = L.polyline(
-            latlngs,
-            {
-                color: "#1976d2",
-                weight: 7,
-                opacity: 0.85,
-                lineCap: "round",
-                lineJoin: "round"
-            }
-        ).addTo(map);
+        const routeColor =
+        isPhotoMode
+        ? "#ff3333"
+        : "#1976d2";
 
+        routeLine = L.polyline(
+        latlngs,
+        {
+            color:routeColor,
+            weight:7,
+            opacity:0.85,
+            lineCap:"round",
+            lineJoin:"round"
+        }
+        ).addTo(map);
         // 距離
         const distanceKm =
             (
                 route.distance / 1000
             ).toFixed(2);
-
         // メートル
         const distanceMeter =
             route.distance;
-
         // 徒歩時間 4km/h
         const walkMinutes =
             Math.max(
@@ -541,45 +607,41 @@ async function showRoute(
                 1,
                 Math.round(distanceMeter/500)
             );
-
         // 情報表示
         document
-            .getElementById("info")
-            .innerHTML = `
-                <div class="destination-name">
-                    ${goal.icon}
-                    ${goal.name}
-                </div>
-                <div class="destination-category">
-                    ${goal.category}
-                </div>
-                <div class="route-information">
-                    <div>🚶<strong> 約 ${walkMinutes} 分</strong></div>
-                    <div>🚴<strong> 約 ${bicycleMinutes} 分</strong></div>
-                    <div>🚙<strong>約 ${carMinutes} 分</strong></div>
-                    <div>📏<strong>${distanceKm} km</strong></div>
-                </div>
-                <div class="route-message">🧭 青い線に沿って進んでください</div>
-            `;
+        .getElementById("info")
+        .innerHTML = `
+            <div class="destination-name">
+                ${goal.icon}
+                ${goal.name}
+            </div>
+            <div class="destination-category">
+                ${goal.category}
+            </div>
+            <div class="route-information">
+                <div>🚶<strong> 約 ${walkMinutes} 分</strong></div>
+                <div>🚴<strong> 約 ${bicycleMinutes} 分</strong></div>
+                <div>🚙<strong>約 ${carMinutes} 分</strong></div>
+                <div>📏<strong>${distanceKm} km</strong></div>
+            </div>
+            <div class="route-message">🧭 青い線に沿って進んでください</div>
+        `;
     }
-
     catch (error) {
         console.error(error);
         document
-            .getElementById("info")
-            .innerHTML = `
-                <div class="route-error">
-                    ⚠️ ルート検索に失敗しました
-                </div>
-            `;
+        .getElementById("info")
+        .innerHTML = `
+            <div class="route-error">
+                ⚠️ ルート検索に失敗しました
+            </div>
+        `;
     }
 }
-
 const categoryButtons =
     document.querySelectorAll(
         ".category-btn"
     );
-
 categoryButtons.forEach(button => {
     button.addEventListener(
         "click",
@@ -630,63 +692,48 @@ categoryButtons.forEach(button => {
 });
 
 document
-    .getElementById("locationButton")
-    .addEventListener(
-        "click",
-        function() {
-            // 現在地がすでに取得できている
-            if (currentPosition) {
-                map.setView(
-                    [
-                        currentPosition.lat,
-                        currentPosition.lng
-                    ],
-                    17
-                );
-                return;
-            }
-            // GPSが使えない
-            if (!navigator.geolocation) {
-                alert(
-                    "位置情報を利用できません。"
-                );
-                return;
-            }
-            // 現在地取得
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat =
-                        position.coords.latitude;
-                    const lng =
-                        position.coords.longitude;
-                    currentPosition = {
-                        lat: lat,
-                        lng: lng
-                    };
-                    updateCurrentMarker(
-                        lat,
-                        lng,
-                        position.coords.accuracy
-                    );
-                    map.setView(
-                        [lat, lng],
-                        17
-                    );
-                },
-                function(error) {
-                    console.error(error);
-                    alert(
-                        "現在地を取得できませんでした。"
-                    );
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
+.getElementById("locationButton")
+.addEventListener(
+    "click",
+    function() {
+        // 現在地がすでに取得できている
+        if (currentPosition) {
+            map.setView([currentPosition.lat,currentPosition.lng],17);
+            return;
         }
-    );
+        // GPSが使えない
+        if (!navigator.geolocation) {
+            alert(
+                "位置情報を利用できません。"
+            );
+            return;
+        }
+        // 現在地取得
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat =
+                    position.coords.latitude;
+                const lng =
+                    position.coords.longitude;
+                currentPosition = {lat: lat,lng: lng};
+                updateCurrentMarker(lat,lng,position.coords.accuracy);
+                map.setView([lat, lng],17);
+            },
+                    
+            function(error) {
+                console.error(error);
+                alert(
+                    "現在地を取得できませんでした。"
+                );
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+);
 
 //コンパス開始処理
 document
@@ -695,171 +742,135 @@ document
     "click",
     toggleCompass
 );
-        console.log(document.getElementById("compassButton"));
 function toggleCompass(){
-        console.log("toggleCompass");
-        inCompassMode =
-            !inCompassMode;
-        if(!inCompassMode){
-            map.setBearing(0);
-            window.removeEventListener(
-                "deviceorientation",
-                handleOrientation,
-                true
-            );
-            return;
-        }
-        if(
-            typeof DeviceOrientationEvent
-            !== "undefined"
-            &&
-            typeof DeviceOrientationEvent
-            .requestPermission
-            === "function"
-        ){
-            DeviceOrientationEvent
-            .requestPermission()
-            .then(result=>{
-                if(result==="granted"){
-                    startCompass();
-                }
-            });
-        }else{
-            startCompass();
-        }
+    inCompassMode =
+        !inCompassMode;
+    if(!inCompassMode){
+        map.dragging.enable();
+        map.setBearing(0);
+        window.removeEventListener(
+            "deviceorientation",
+            handleOrientation,
+            true
+        );
+        return;
+    }
+    if(
+        typeof DeviceOrientationEvent
+        !== "undefined"
+        &&
+        typeof DeviceOrientationEvent
+        .requestPermission
+        === "function"
+    ){
+        DeviceOrientationEvent
+        .requestPermission()
+        .then(result=>{
+            if(result==="granted"){
+                startCompass();
+            }
+        });
+    }else{
+        startCompass();
+        map.dragging.disable();
+    }
 }
-
-document
-.getElementById("calibrateButton")
-.addEventListener(
-        "click",
-        function(){
-                headingOffset = 
-                        (360 - smoothHeading) % 360;
-                console.log(
-                        "headingOffset =",
-                        headingOffset
-                );
-                alert(
-                        "北合わせ完了"
-                );
-        }
-);
 
 //コンパス処理
 function startCompass(){
+
+    if("ondeviceorientationabsolute"in window){
         window.addEventListener(
-                "deviceorientation",
-                handleOrientation,
-                true
+            "deviceorientationabsolute",
+            handleOrientation,
+            true
         );
+    }else{
+        window.addEventListener(
+            "deviceorientation",
+            handleOrientation,
+            true
+        );
+    }
 }
 
+//地図回転
 let smoothHeading = 0;
 let firstHeading = true;
-function normalizeAngle(angle){
-    return (
-        angle + 360
-    ) % 360;
-}
 
-let headingOffset = 0;
+function normalizeAngle(angle){
+    return(angle + 360) % 360;
+}
 
 function handleOrientation(event){
-        console.log(
-                "type =",event.type,
-                "alpha =",event.alpha,
-                "beta =",event.beta,
-                "gamma =",event.gumma,
-                "absolute =",event.absolute
-        );
-        /*
-        console.log("alpha =",event.alpha);
-        if(!event){
-                console.log("eventなし");
-                return;
-        }
+    let heading = null;
+    if(event.webkitCompassHeading !== undefined)
+    {
+        heading =
+            event.webkitCompassHeading;
+    }
+    else if(event.alpha !== null)
+    {
+        heading =
+            (360 - event.alpha) % 360;
+    }
+    if(heading === null){
+        return;
+    }
+/*
+    document.getElementById("info").innerHTML =
+    `
+    heading : ${heading.toFixed(1)}
+    <br>
+    smooth:${smoothHeading.toFixed(1)}
+    <br>
+    bearing:${map.getBearing()}
+    <br>
+    α : ${event.alpha?.toFixed(1)}
+    <br>
+    absolute : ${event.absolute}
+    `;
+*/
         
-        console.log(
-                "type =",event.type,
-                "absolute =",event.absolute, 
-                "alpha =",event.alpha,
-                "webkitCompassHeading =",event.webkitCompassHeading);
-        */
-        let heading = null;
-        // iPhone
-        if(
-            typeof event.webkitCompassHeading === "number"
-        ){
-            heading =
-                event.webkitCompassHeading;
+    if(firstHeading){
+        smoothHeading = heading;
+        firstHeading = false;
+    }
+    else
+    {
+        let delta = heading - smoothHeading;
+        if(delta > 180){
+            delta -= 360;
         }
-        // Android
-        else if(
-            typeof event.alpha === "number"
-        ){
-            heading =
-                (360 - event.alpha) % 360;
-            heading =
-                (heading + headingOffset) % 360;
+        if(delta < -180){
+            delta += 360;
         }
-        /*
-        if(heading === null){
-            return;
-        }
-        // 初回
-        if(firstHeading){
-            smoothHeading =
-                heading;
-            firstHeading =
-                false;
-        }
-        else{
-            let delta =
-                heading -
-                smoothHeading;
-            if(delta > 180){
-                delta -= 360;
-            }
-            if(delta < -180){
-                delta += 360;
-            }
-            smoothHeading +=
-                delta * 0.15;
-            smoothHeading =
-                normalizeAngle(
-                    smoothHeading
-                );
-        }*/
-        // デバッグ表示
-        document.getElementById("info").innerHTML =
-        `
-        heading:${Math.round(heading)}
-        <br>
-        alpha:${event.alpha !== null ? event.alpha.toFixed(1) : "null"}
-        <br>
-        beta:${event.beta !== null ? event.beta.toFixed(1) : "null"}
-        <br>
-        gamma:${event.gamma !== null ? event.gamma.toFixed(1) : "null"}
-        <br>
-        absolute:${event.absolute}
-        `;
-        
-        // 地図回転（今はコメントアウト）
-        /*
-        map.setBearing(
-            -smoothHeading
-        );
-        */
-        /*
-        // 矢印取得
-        const arrow =
-            document.getElementById(
-                "arrow"
+        smoothHeading += delta * 0.15;
+        smoothHeading = 
+            normalizeAngle(
+                smoothHeading
             );
-        if(arrow){
-            // テスト用
-            arrow.style.transform =
-                `rotate(${-heading}deg)`;
-        }*/
+    }
+    const diff =
+        Math.abs(
+            heading -
+            smoothHeading
+        );
+    if(diff < 1){
+        return;
+    }
+    map.setBearing(
+        -smoothHeading
+    );
+    const arrow =
+        document.getElementById(
+            "arrow"
+        );
+    if(arrow){
+        arrow.style.transform =
+             `rotate(0deg)`;    
+    }
 }
+
+
+
