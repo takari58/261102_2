@@ -9,10 +9,7 @@ body {
     height: 100%;
 }
 body {
-    font-family:
-        "Yu Gothic",
-        "Meiryo",
-        sans-serif;
+    font-family:"Yu Gothic","Meiryo",sans-serif;
     background: #f5f5f5;
     overflow: hidden;
 }
@@ -265,13 +262,19 @@ header h1 {
     transition:
         all 0.2s ease;
 }
-#calibrateButton{
-    position:fixed;
-    right:20px;
-    button:140px;
-    width:120px;
+#layerButton{
+    position:absolute;
+    right:135px;
+    bottom:25px;
+    width:50px;
     height:50px;
+    border:none;
+    border-radius:50%;
+    background:white;
     z-index:1000;
+    font-size:24px;
+    box-shadow:
+        0 3px 10px rgba(0,0,0,.3);
 }
 #locationButton:hover {
     transform: scale(1.05);
@@ -285,17 +288,18 @@ header h1 {
 #compassButton:active {
     transform: scale(0.92);
 }
+#layerButton:hover {
+    transform: scale(1.05);
+}
+#layerButton:active {
+    transform: scale(0.92);
+}
 #legend {
     position: absolute;
     left: 12px;
     bottom: 20px;
     z-index: 999;
-    background: rgba(
-        255,
-        255,
-        255,
-        0.95
-    );
+    background: rgba(255,255,255,0.95);
     padding: 10px;
     border-radius: 10px;
     box-shadow:
@@ -380,6 +384,7 @@ header h1 {
                 100vh - 184px
             );
     }
+    /*
     #locationButton {
         right: 12px;
         bottom: 75px;
@@ -387,6 +392,7 @@ header h1 {
         height: 48px;
         line-height: 48px;
     }
+    */
     #legend {
         left: 10px;
         bottom: 75px;
